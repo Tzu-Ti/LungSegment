@@ -31,73 +31,76 @@ $ python3 preprocess.py --folder_path <folder_path> --split_data
 ```
 
 ### Training
-1. Train the model.
-```=shell
-$ python3 main.py --train --yaml_path <yaml_path>
-# e.g.
-# python3 main.py --train --yaml_path configs/231030.yaml
-```
-2. Open the Tensorboard.
+1. Open the Tensorboard.
 ```=shell
 $ tensorboard --logdir lightning_logs --bind_all
 ```
-
-### Testing
+2. Train the lung segment model.
 ```=shell
-$ python3 main.py --test --yaml_path <yaml_path> --ckpt_path <ckpt_path>
+$ python3 main.py --LungSegment --train --yaml_path <yaml_path>
 # e.g.
-# python3 main.py --test --yaml_path configs/231030.yaml --ckpt_path checkpoints/epoch\=139-step\=91420.ckpt
+# python3 main.py --LungSegment --train --yaml_path configs/231215.yaml
+```
+3. Train the tumor segment model.
+```=shell
+$ python3 main.py --TumorSegment --train --yaml_path <yaml_path>
+# e.g.
+# python3 main.py --TumorSegment --train --yaml_path configs/231217.yaml
 ```
 
 ## Inference
 ### Download checkpoint and example
-Download the checkpoint from [Drive](http://gofile.me/6Ukc0/KCdnFlIYh) and put it in "checkpoints" folder.
-And download the example (000608355C) from the same drive and put it in "example" folder.
+Download the checkpoint from [Drive](http://gofile.me/6Ukc0/8LLuvie7y) and put it in "checkpoints" folder.
+And download the example (100158_2001) from the same drive and put it in "example" folder.
 ### Data structure
 ```
--- CTSegment
+-- LungSegment
     -- example
-        -- 000608355C
-            -- 000608355C_CT.nii.gz
+        -- 100158_2001
+            -- 100158_2001_CT.nii.gz
     -- checkpoints
-        -- epoch=139-step=91420.ckpt
+        -- Lung=199.ckpt
+        -- Tumor=499.ckpt
     ...
 ```
 ### Preprocess
 Convert 3D .nii.gz to 2D .npy, including CT and mask.
 ```=shell
 $ cd data
-$ python3 preprocess.py --ct_path /root/VGHTC/CTSegment/000074623G/000074623G_CT.nii.gz --convert_3d_to_2d_ct
+$ python3 preprocess.py --ct_path /root/VGHTC/LungSegment/example/100158_2001/100158_2001_CT.nii.gz --convert_3d_to_2d_ct
+```
+
+### Testing
+1. Test the lung segment model.
+```=shell
+$ python3 main.py --LungSegment --test --yaml_path <yaml_path> --ckpt_path <ckpt_path>
+# e.g.
+# python3 main.py --LungSegment --test --yaml_path configs/231215.yaml --ckpt_path checkpoints/Lung=199.ckpt
+```
+2. Test the tumor segment model.
+```=shell
+$ python3 main.py --TumorSegment --test --yaml_path <yaml_path> --ckpt_path <ckpt_path>
+# e.g.
+# python3 main.py --TumorSegment --test --yaml_path configs/231217.yaml --ckpt_path checkpoints/Tumor=499.ckpt
 ```
 
 ### Inference
 Prediction will save in "outputs" folder.
 ```=shell
-$ python3 main.py \
+$ python3 evaluate.py \
     --predict \
-    --ckpt_path <ckpt_path> \
     --yaml_path <yaml_path> \
     --patient_path <patient_path> \
     --ct_path <ct_path> \
     --saving_folder <saving_folder>
 # e.g.
-# python3 main.py \
-    --predict \
-    --ckpt_path checkpoints/epoch\=139-step\=91420.ckpt \
-    --yaml_path configs/231030.yaml \
-    --patient_path /root/VGHTC/CTSegment/000074623G/processed \
-    --ct_path /root/VGHTC/CTSegment/000074623G/000074623G_CT.nii.gz \
-    --saving_folder /root/VGHTC/CTSegment/outputs
+# python3 evaluate.py \
+     --predict \ 
+     --yaml_path configs/evaluate.yaml \
+     --patient_path /root/VGHTC/LungSegment/example/100158_2001/processed \ 
+     --ct_path /root/VGHTC/LungSegment/example/100158_2001/100158_2001_CT.nii.gz \
+     --saving_folder Output
 ```
-
-## Evaluation
-| Class| Dice  |
-|:----:| :----:|
-| 131  | 0.990 |
-| 181  | 1.000 |
-| 212  | 0.962 |
-| 231  | 1.000 |
-| 241  | 0.986 |
 
 # Note
 NLST dataset: 112506_2001, this data can't open by nibabel, so we can't use it.
