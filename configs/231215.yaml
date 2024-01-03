@@ -1,0 +1,26 @@
+model_name: '231215'
+description: 'LungSegment'
+
+# training setting
+epochs: 200
+batch_size: 8
+lr: 0.0005
+num_workers: 8
+
+# I/O
+# Input
+folder: '/root/VGHTC/NLST_lung_Seg_preprocessed'
+list_path: '/root/VGHTC/LungSegment/data/trainList.txt'
+val_list_path: '/root/VGHTC/LungSegment/data/testList.txt'
+test_list_path: '/root/VGHTC/LungSegment/data/testList.txt'
+json_path: '/root/VGHTC/LungSegment/data/label.json'
+# Output
+show_num: 4
+
+# model setting
+num_classes: 6
+resolution: 512
+down_times: 5
+
+# data setting
+default_orient: 'LPS'

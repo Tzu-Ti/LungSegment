@@ -1,0 +1,29 @@
+model_name: 'Evaluate'
+description: '231215+231217'
+
+# data loader setting
+batch_size: 8
+num_workers: 8
+
+# I/O
+# Input
+folder: '/root/VGHTC/NLST_lung_Seg_preprocessed'
+list_path: '/root/VGHTC/LungSegment/data/tumor_trainList.txt'
+val_list_path: '/root/VGHTC/LungSegment/data/tumor_testList.txt'
+test_list_path: '/root/VGHTC/LungSegment/data/tumor_testList.txt'
+lung_json_path: '/root/VGHTC/LungSegment/data/label.json'
+# checkpoint path
+lung_ckpt_path: '/root/VGHTC/LungSegment/lightning_logs/231215/checkpoints/epoch=199-step=301600.ckpt'
+tumor_ckpt_path: '/root/VGHTC/LungSegment/lightning_logs/231217/checkpoints/epoch=499-step=48000.ckpt'
+
+# Output
+show_num: 4
+
+# model setting
+tumor_classes: 2
+lung_classes: 6
+resolution: 512
+down_times: 5
+
+# data setting
+default_orient: 'LPS'
